@@ -49,6 +49,7 @@ public class TransactionService {
         return mapToResponse(transaction);
     }
 
+    @Transactional(readOnly = true)
     public Page<TransactionResponse> getAllTransactions(
             TransactionType type, String category,
             LocalDate dateFrom, LocalDate dateTo, Pageable pageable) {
@@ -71,6 +72,7 @@ public class TransactionService {
         return transactionRepository.findAll(spec, pageable).map(this::mapToResponse);
     }
 
+    @Transactional(readOnly = true)
     public TransactionResponse getTransactionById(Long id) {
         Transaction transaction = findTransactionById(id);
         return mapToResponse(transaction);
@@ -128,6 +130,8 @@ public class TransactionService {
     }
 
     private TransactionResponse mapToResponse(Transaction transaction) {
+        String createdByName = transaction.getCreatedBy() != null ? transaction.getCreatedBy().getName() : null;
+        String createdByEmail = transaction.getCreatedBy() != null ? transaction.getCreatedBy().getEmail() : null;
         return TransactionResponse.builder()
                 .id(transaction.getId())
                 .amount(transaction.getAmount())
@@ -135,8 +139,8 @@ public class TransactionService {
                 .category(transaction.getCategory())
                 .date(transaction.getDate())
                 .notes(transaction.getNotes())
-                .createdByName(transaction.getCreatedBy().getName())
-                .createdByEmail(transaction.getCreatedBy().getEmail())
+                .createdByName(createdByName)
+                .createdByEmail(createdByEmail)
                 .createdAt(transaction.getCreatedAt())
                 .updatedAt(transaction.getUpdatedAt())
                 .build();
