@@ -4,6 +4,7 @@ import com.finance.backend.entity.Transaction;
 import com.finance.backend.enums.TransactionType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class TransactionSpecification {
@@ -27,6 +28,14 @@ public class TransactionSpecification {
 
     public static Specification<Transaction> dateBefore(LocalDate to) {
         return (root, query, cb) -> to == null ? null : cb.lessThanOrEqualTo(root.get("date"), to);
+    }
+
+    public static Specification<Transaction> amountGreaterThanOrEqual(BigDecimal minAmount) {
+        return (root, query, cb) -> minAmount == null ? null : cb.greaterThanOrEqualTo(root.get("amount"), minAmount);
+    }
+
+    public static Specification<Transaction> amountLessThanOrEqual(BigDecimal maxAmount) {
+        return (root, query, cb) -> maxAmount == null ? null : cb.lessThanOrEqualTo(root.get("amount"), maxAmount);
     }
 
     public static Specification<Transaction> createdBy(Long userId) {

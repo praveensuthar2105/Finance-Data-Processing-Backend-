@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
@@ -52,7 +53,9 @@ public class TransactionService {
     @Transactional(readOnly = true)
     public Page<TransactionResponse> getAllTransactions(
             TransactionType type, String category,
-            LocalDate dateFrom, LocalDate dateTo, Pageable pageable) {
+            LocalDate dateFrom, LocalDate dateTo,
+            BigDecimal minAmount, BigDecimal maxAmount,
+            Pageable pageable) {
 
         Specification<Transaction> spec = Specification.where(null);
 
@@ -67,6 +70,12 @@ public class TransactionService {
         }
         if (dateTo != null) {
             spec = spec.and(TransactionSpecification.dateBefore(dateTo));
+        }
+        if (minAmount != null) {
+            spec = spec.and(TransactionSpecification.amountGreaterThanOrEqual(minAmount));
+        }
+        if (maxAmount != null) {
+            spec = spec.and(TransactionSpecification.amountLessThanOrEqual(maxAmount));
         }
 
         return transactionRepository.findAll(spec, pageable).map(this::mapToResponse);

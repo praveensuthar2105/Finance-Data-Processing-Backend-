@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RestController
@@ -55,9 +56,11 @@ public class TransactionController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
             @PageableDefault(size = 10, sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(
-                transactionService.getAllTransactions(type, category, dateFrom, dateTo, pageable));
+                transactionService.getAllTransactions(type, category, dateFrom, dateTo, minAmount, maxAmount, pageable));
     }
 
     @GetMapping("/{id}")
