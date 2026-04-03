@@ -37,14 +37,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
     @Query(value = """
             SELECT
-                EXTRACT(MONTH FROM date) AS month,
+                EXTRACT(MONTH FROM date) AS month_val,
                 SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) AS totalIncome,
                 SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS totalExpenses
             FROM transactions
             WHERE EXTRACT(YEAR FROM date) = :year
               AND is_deleted = false
             GROUP BY EXTRACT(MONTH FROM date)
-            ORDER BY month
+            ORDER BY month_val
             """, nativeQuery = true)
     List<Object[]> getMonthlyTrend(@Param("year") int year);
 

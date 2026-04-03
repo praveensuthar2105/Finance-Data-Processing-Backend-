@@ -115,6 +115,7 @@ public class DashboardService {
         return new ArrayList<>(monthMap.values());
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<TransactionResponse> getRecentTransactions(int limit) {
         if (limit <= 0) limit = 10;
         if (limit > 50) limit = 50;
@@ -128,6 +129,8 @@ public class DashboardService {
     }
 
     private TransactionResponse mapToResponse(Transaction transaction) {
+        String createdByName = transaction.getCreatedBy() != null ? transaction.getCreatedBy().getName() : null;
+        String createdByEmail = transaction.getCreatedBy() != null ? transaction.getCreatedBy().getEmail() : null;
         return TransactionResponse.builder()
                 .id(transaction.getId())
                 .amount(transaction.getAmount())
@@ -135,8 +138,8 @@ public class DashboardService {
                 .category(transaction.getCategory())
                 .date(transaction.getDate())
                 .notes(transaction.getNotes())
-                .createdByName(transaction.getCreatedBy().getName())
-                .createdByEmail(transaction.getCreatedBy().getEmail())
+                .createdByName(createdByName)
+                .createdByEmail(createdByEmail)
                 .createdAt(transaction.getCreatedAt())
                 .updatedAt(transaction.getUpdatedAt())
                 .build();
